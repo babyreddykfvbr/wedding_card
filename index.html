@@ -1182,8 +1182,34 @@ function openEnv(){
 }
 
 /* ── RSVP → Google Forms ── */
-const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSftebpCl3w6SbjyYZ5JmenVQc6riFDNMRd4k4PdJgYwXTDvgQ/viewform?usp=publish-editor';
-const ENTRIES={name:'entry.000000001',attend:'entry.000000002',msg:'entry.000000003'};
+<script>
+
+const scriptURL = "https://script.google.com/macros/s/AKfycbzXq0zi4ChGoDpmBY4V_TntowDYMI1OadclMFXT3eUzKX5sf8-q2QaJupEQrjWDrsdFIw/exec";
+
+const form = document.getElementById("rsvpForm");
+
+form.addEventListener("submit", function(e){
+
+e.preventDefault();
+
+const data = {
+
+name: form.name.value,
+attend: form.attend.value,
+message: form.message.value
+
+};
+
+fetch(scriptURL,{
+method:"POST",
+body: JSON.stringify(data)
+})
+.then(res=>alert("Cảm ơn bạn đã phản hồi!"));
+
+});
+
+</script>
+   const ENTRIES={name:'entry.000000001',attend:'entry.000000002',msg:'entry.000000003'};
 
 function doRSVP(){
   const name=document.getElementById('rName').value.trim();
