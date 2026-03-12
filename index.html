@@ -1212,22 +1212,24 @@ body: JSON.stringify(data)
    const ENTRIES={name:'entry.000000001',attend:'entry.000000002',msg:'entry.000000003'};
 
 function doRSVP(){
-  const name=document.getElementById('rName').value.trim();
-  const att=document.getElementById('rAtt').value;
-  if(!name){alert('Vui lòng nhập họ và tên!');return;}
-  if(!att){alert('Vui lòng chọn xác nhận tham dự!');return;}
-  const msg=document.getElementById('rMsg').value;
-  if(!FORM_URL.includes('YOUR_FORM_ID')){
-    const fd=new FormData();
-    fd.append(ENTRIES.name,name);fd.append(ENTRIES.attend,att);fd.append(ENTRIES.msg,msg);
-    fetch(FORM_URL,{method:'POST',mode:'no-cors',body:fd}).catch(()=>{});
-  }
-  document.getElementById('rName').value='';
-  document.getElementById('rAtt').value='';
-  document.getElementById('rMsg').value='';
-  const ok=document.getElementById('rOK');
-  ok.style.display='block';
-  setTimeout(()=>ok.style.display='none',5000);
+
+const name = document.getElementById("rName").value;
+const attend = document.getElementById("rAtt").value;
+const message = document.getElementById("rMsg").value;
+
+const formData = new FormData();
+formData.append("name", name);
+formData.append("attend", attend);
+formData.append("message", message);
+
+fetch("https://script.google.com/macros/s/AKfycbXXXXXXXXXXXX/exec", {
+method: "POST",
+body: formData
+})
+.then(res => {
+document.getElementById("rOK").style.display="block";
+})
+.catch(err => alert("Gửi thất bại"));
 }
 
 /* ── QR close ── */
