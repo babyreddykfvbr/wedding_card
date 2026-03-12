@@ -240,6 +240,43 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 #cvs{position:fixed;inset:0;pointer-events:none;z-index:9999;display:none;}
 
 /* ════════════════════════════════
+   NÚT NHẠC NỔI
+════════════════════════════════ */
+#musicBtn{
+  position:fixed;bottom:24px;right:20px;z-index:8000;
+  width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#e0ba7a,var(--gold));
+  border:2px solid rgba(255,255,255,.3);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0 rgba(201,169,110,.6);
+  transition:transform .2s;
+  -webkit-tap-highlight-color:transparent;
+  animation:fadeUp .9s 1.6s both;
+}
+#musicBtn:hover{transform:scale(1.1);}
+#musicBtn.playing{
+  animation:fadeUp .9s 1.6s both, pulse-ring 1.6s ease-in-out infinite;
+}
+@keyframes pulse-ring{
+  0%  {box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0   rgba(201,169,110,.6);}
+  60% {box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 12px rgba(201,169,110,.0);}
+  100%{box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0   rgba(201,169,110,.0);}
+}
+#musicIcon{font-size:22px;line-height:1;color:var(--red2);pointer-events:none;
+  transition:transform .3s;display:block;}
+#musicBtn.playing #musicIcon{animation:spin-note 4s linear infinite;}
+@keyframes spin-note{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+#musicLabel{
+  position:fixed;bottom:8px;right:14px;z-index:8000;
+  font-family:var(--fn);font-size:9px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);text-align:center;width:52px;
+  pointer-events:none;
+  animation:fadeUp .9s 1.6s both;
+}
+
+/* ════════════════════════════════
    §2 GIA ĐÌNH HAI BÊN
 ════════════════════════════════ */
 .fam-grid{display:grid;grid-template-columns:1fr 64px 1fr;
@@ -1187,6 +1224,70 @@ function closeQR(e){
   if(e.target===document.getElementById('qrOv'))
     document.getElementById('qrOv').classList.remove('show');
 }
+
+/* ══════════════════════════════════════
+   NHẠC NỀN
+══════════════════════════════════════ */
+const music   = document.getElementById('bgMusic');
+const btn     = document.getElementById('musicBtn');
+const lbl     = document.getElementById('musicLabel');
+let   isPlaying = false;
+
+function toggleMusic(){
+  if(isPlaying){
+    music.pause();
+    btn.classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '🎵';
+    lbl.textContent = 'Nhạc';
+    isPlaying = false;
+  } else {
+    music.play().then(()=>{
+      btn.classList.add('playing');
+      document.getElementById('musicIcon').textContent = '🎶';
+      lbl.textContent = 'Đang phát';
+      isPlaying = true;
+    }).catch(()=>{
+      // Trình duyệt chặn autoplay — người dùng cần tap lại
+      lbl.textContent = 'Tap lại';
+    });
+  }
+}
+
+/* Tự động phát khi người dùng tương tác lần đầu */
+let autoStarted = false;
+function tryAutoPlay(){
+  if(autoStarted || isPlaying) return;
+  autoStarted = true;
+  music.volume = 0.55;
+  music.play().then(()=>{
+    btn.classList.add('playing');
+    document.getElementById('musicIcon').textContent = '🎶';
+    lbl.textContent = 'Đang phát';
+    isPlaying = true;
+  }).catch(()=>{ autoStarted = false; });
+}
+document.addEventListener('click',  tryAutoPlay, {once:true});
+document.addEventListener('touchend', tryAutoPlay, {once:true, passive:true});
 </script>
+<!-- ══════════════════════════════════════
+  NHẠC NỀN
+══════════════════════════════════════ -->
+
+<!-- 
+  ► HƯỚNG DẪN: Đặt file nhạc cùng thư mục với file HTML này
+    Đổi "nhac-cuoi.mp3" thành tên file nhạc của bạn
+    Hỗ trợ: .mp3  .ogg  .wav  .m4a
+-->
+<audio id="bgMusic" loop preload="auto">
+  <source src="nhac-cuoi.mp3" type="audio/mpeg">
+  <source src="nhac-cuoi.ogg" type="audio/ogg">
+</audio>
+
+<!-- Nút nhạc nổi góc phải -->
+<button id="musicBtn" onclick="toggleMusic()" title="Bật / Tắt nhạc">
+  <span id="musicIcon">🎵</span>
+</button>
+<div id="musicLabel">Nhạc</div>
+
 </body>
 </html>
