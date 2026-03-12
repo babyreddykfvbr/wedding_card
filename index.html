@@ -196,41 +196,31 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 .ec-chi{font-family:var(--fh);font-size:28px;color:var(--red);line-height:1;margin-bottom:2px;}
 .ec-names{font-family:var(--fs);font-size:clamp(14px,3.8vw,22px);font-weight:700;color:var(--red2);margin:2px 0 6px;}
 
-/* ── ẢNH ĐÔI bên trong card ── */
-.ec-photos{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:5px;
-  margin:0 0 8px;
-}
-.ec-photo-wrap{
+/* ── ẢNH 1 TO bên trong card ── */
+.ec-photo-single{
   position:relative;
   overflow:hidden;
   line-height:0;
-  /* aspect-ratio portrait, tự scale theo width của card */
-  aspect-ratio:3/4;
+  margin:0 0 8px;
+  aspect-ratio:3/2;
   background:var(--goldpale);
+  border:1.5px solid var(--goldlt);
 }
-.ec-photo{
+.ec-photo-single img{
   width:100%;height:100%;
   object-fit:cover;
   object-position:top center;
   display:block;
-  border:1px solid var(--goldlt);
 }
-/* Label overlay gradient */
-.ec-photo-lbl{
+.ec-photo-single .ec-photo-lbl{
   position:absolute;bottom:0;left:0;right:0;
   background:linear-gradient(transparent,rgba(42,5,7,.72));
-  padding:20px 4px 6px;
-  font-family:var(--fn);font-size:9px;font-weight:700;
-  letter-spacing:.26em;text-transform:uppercase;
+  padding:28px 8px 8px;
+  font-family:var(--fs);font-size:clamp(13px,3.5vw,18px);font-weight:700;
   color:var(--goldlt);text-align:center;
   pointer-events:none;
+  letter-spacing:.04em;
 }
-/* Fallback màu khi ảnh lỗi */
-.ec-photo-wrap.no-photo-bride{background:linear-gradient(160deg,#e8d5b0,#c9a96e55);}
-.ec-photo-wrap.no-photo-groom{background:linear-gradient(160deg,rgba(159,15,21,.25),rgba(122,11,16,.4));}
 
 .ec-date{font-family:var(--fn);font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.18em;}
 .env-hint{font-family:var(--fn);font-size:12px;font-weight:500;
@@ -279,39 +269,37 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 /* ════════════════════════════════
    §2 GIA ĐÌNH HAI BÊN
 ════════════════════════════════ */
-.fam-grid{display:grid;grid-template-columns:1fr 64px 1fr;
-  max-width:860px;margin:32px auto 0;}
-@media(max-width:560px){
-  .fam-grid{grid-template-columns:1fr;}
-  .fam-div{flex-direction:row;padding:14px 20px;height:auto;}
-  .fam-div .vl{width:50px;height:1px;min-height:0;}
+.fam-grid{
+  display:grid;
+  grid-template-columns:1fr 44px 1fr;
+  max-width:860px;margin:32px auto 0;
 }
-.fam-side{padding:22px 26px;text-align:center;}
-.fam-ttl{font-family:var(--fs);font-size:clamp(22px,4vw,30px);color:var(--gold);margin-bottom:18px;display:block;}
-.fam-p{font-family:var(--fn);font-size:clamp(14px,2.5vw,16px);font-weight:400;
-  color:rgba(255,255,255,.9);line-height:2;}
+/* Giữ layout ngang trên mọi màn hình — KHÔNG stack dọc */
+.fam-side{padding:16px 10px;text-align:center;}
+.fam-ttl{font-family:var(--fs);font-size:clamp(16px,4.5vw,30px);color:var(--gold);margin-bottom:12px;display:block;}
+.fam-p{font-family:var(--fn);font-size:clamp(11px,2.8vw,16px);font-weight:400;
+  color:rgba(255,255,255,.9);line-height:1.9;}
 .fam-p b{font-weight:700;color:var(--white);}
-.fam-sub{margin-top:22px;padding-top:18px;border-top:1px solid rgba(201,169,110,.3);}
-.fam-role{font-family:var(--fn);font-size:10px;font-weight:700;letter-spacing:.42em;
-  text-transform:uppercase;color:var(--goldlt);margin-bottom:6px;opacity:.8;}
-.fam-name{font-family:var(--fh);font-size:clamp(22px,4.5vw,34px);font-weight:700;color:var(--white);}
-.fam-div{display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:6px;}
-.vl{width:1px;flex:1;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.55),transparent);min-height:50px;}
+.fam-sub{margin-top:16px;padding-top:14px;border-top:1px solid rgba(201,169,110,.3);}
+.fam-role{font-family:var(--fn);font-size:clamp(8px,2vw,10px);font-weight:700;letter-spacing:.38em;
+  text-transform:uppercase;color:var(--goldlt);margin-bottom:4px;opacity:.8;}
+.fam-name{font-family:var(--fh);font-size:clamp(18px,5vw,34px);font-weight:700;color:var(--white);}
+.fam-div{display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;}
+.vl{width:1px;flex:1;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.55),transparent);min-height:40px;}
 .fdot{width:7px;height:7px;background:var(--gold);border-radius:50%;flex-shrink:0;}
-.chi-v{font-family:var(--fh);font-size:clamp(36px,7vw,54px);color:var(--gold);
-  line-height:1;writing-mode:vertical-rl;padding:6px 0;}
+.chi-v{font-family:var(--fh);font-size:clamp(26px,6vw,48px);color:var(--gold);
+  line-height:1;writing-mode:vertical-rl;padding:4px 0;}
 
 /* Location under family */
 .fam-loc{
   max-width:860px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 64px 1fr;
+  display:grid;grid-template-columns:1fr 44px 1fr;
   padding:0 0 10px;
 }
-@media(max-width:560px){.fam-loc{grid-template-columns:1fr;}}
-.fam-loc-side{text-align:center;padding:0 26px 16px;}
-.fam-loc-txt{font-family:var(--fn);font-size:13px;font-weight:400;
+.fam-loc-side{text-align:center;padding:0 8px 16px;}
+.fam-loc-txt{font-family:var(--fn);font-size:clamp(10px,2.5vw,13px);font-weight:400;
   color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;}
-.fam-loc-gap{} /* empty middle */
+.fam-loc-gap{}
 
 /* ════════════════════════════════
    §3 CÔ DÂU & CHÚ RỂ
@@ -538,7 +526,6 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
 @media(max-width:480px){
   .inv-frame{padding:34px 18px;}
   .rsvp-box{padding:28px 18px;border-radius:14px;}
-  .fam-loc{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -575,18 +562,11 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
           <div class="ec-chi">囍</div>
           <div class="ec-names">Trung Dũng &amp; Phương Thảo</div>
 
-          <!-- 2 ảnh song song, portrait, có label overlay -->
-          <div class="ec-photos">
-            <div class="ec-photo-wrap">
-              <img src="LXD_5672.jpg" class="ec-photo" alt="Phương Thảo"
-                onerror="this.parentElement.classList.add('no-photo-bride');this.style.display='none';">
-              <div class="ec-photo-lbl">Cô Dâu</div>
-            </div>
-            <div class="ec-photo-wrap">
-              <img src="LXD_6256.jpg" class="ec-photo" alt="Trung Dũng"
-                onerror="this.parentElement.classList.add('no-photo-groom');this.style.display='none';">
-              <div class="ec-photo-lbl">Chú Rể</div>
-            </div>
+          <!-- 1 ảnh to cô dâu & chú rể -->
+          <div class="ec-photo-single">
+            <img src="LXD_5566.jpg" alt="Trung Dũng &amp; Phương Thảo"
+              onerror="this.parentElement.style.background='linear-gradient(160deg,#9f0f15,#7a0b10)';">
+            <div class="ec-photo-lbl">Trung Dũng &amp; Phương Thảo</div>
           </div>
 
           <div class="ec-date num">22 · 03 · 2026</div>
