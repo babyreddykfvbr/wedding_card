@@ -102,46 +102,127 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 .hero-couple-img{width:100%;height:clamp(260px,65vw,460px);object-fit:cover;object-position:top center;display:block;border:2px solid rgba(201,169,110,.5);box-shadow:0 12px 40px rgba(0,0,0,.4);}
 
 /* Envelope */
-.env-wrap{position:relative;z-index:5;width:clamp(280px,78vw,500px);
-  margin-top:28px;perspective:900px;animation:fadeUp .9s .6s both;}
-.env-box{width:100%;padding-bottom:62%;position:relative;border-radius:4px;
-  box-shadow:0 24px 70px rgba(0,0,0,.45);}
-.env-base{position:absolute;inset:0;
+.env-wrap{
+  position:relative;z-index:5;
+  width:clamp(280px,78vw,500px);
+  margin-top:16px;
+  animation:fadeUp .9s .7s both;
+}
+/* env-box không dùng padding-bottom cố định nữa — để card quyết định chiều cao */
+.env-box{
+  width:100%;
+  position:relative;
+  border-radius:4px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  /* perspective đặt ở đây để flap 3D hoạt động đúng */
+  perspective:900px;
+}
+.env-base{
+  position:relative;
   background:linear-gradient(160deg,#8a0c11 0%,var(--red2) 100%);
-  border:1px solid rgba(201,169,110,.35);border-radius:4px;overflow:hidden;}
-.env-sl,.env-sr{position:absolute;top:0;width:51%;height:100%;
-  background:linear-gradient(160deg,#6b0a0f,var(--red2));}
-.env-sl{left:0;clip-path:polygon(0 0,100% 50%,0 100%);}
-.env-sr{right:0;clip-path:polygon(0 50%,100% 0,100% 100%);}
-.env-sb{position:absolute;bottom:0;left:0;width:100%;height:55%;
-  background:linear-gradient(0deg,#6b0a0f,var(--red2));
+  border:1px solid rgba(201,169,110,.35);
+  border-radius:4px;
+  overflow:hidden;
+}
+/* Tam giác trái/phải trang trí */
+.env-sl,.env-sr{position:absolute;top:0;width:51%;height:100%;pointer-events:none;z-index:2;}
+.env-sl{left:0;background:linear-gradient(160deg,rgba(0,0,0,.14),transparent);clip-path:polygon(0 0,100% 50%,0 100%);}
+.env-sr{right:0;background:linear-gradient(200deg,rgba(0,0,0,.10),transparent);clip-path:polygon(0 50%,100% 0,100% 100%);}
+.env-sb{position:absolute;bottom:0;left:0;width:100%;height:55%;pointer-events:none;z-index:2;
+  background:linear-gradient(0deg,rgba(0,0,0,.16),transparent);
   clip-path:polygon(0 100%,50% 0,100% 100%);}
-.env-flap{position:absolute;top:0;left:0;width:100%;height:0;padding-bottom:53%;z-index:12;
-  background:linear-gradient(170deg,#a81017,#7a0b10);
+
+/* ── FLAP 3D ──
+   Wrap riêng để perspective không bị inherit làm lệch,
+   flap được clip thành tam giác chỉ phần trên bì thư */
+.env-flap-outer{
+  position:absolute;top:0;left:0;width:100%;
+  /* chiều cao bằng đúng nắp tam giác: ~48% width */
+  height:0;padding-bottom:48%;
+  z-index:15;
+  perspective:900px;
+  pointer-events:none;
+}
+.env-flap{
+  position:absolute;inset:0;
+  background:linear-gradient(170deg,#b51219,#7a0b10);
   clip-path:polygon(0 0,50% 100%,100% 0);
-  transform-origin:top center;transition:transform .75s cubic-bezier(.4,0,.2,1);
-  border-bottom:1px solid rgba(201,169,110,.2);}
-.env-flap.open{transform:rotateX(-175deg);}
-.env-seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  transform-origin:top center;
+  transform:rotateX(0deg);
+  transition:transform .85s cubic-bezier(.4,0,.2,1);
+  border-bottom:1px solid rgba(201,169,110,.22);
+  will-change:transform;
+  pointer-events:auto;
+}
+.env-flap.open{transform:rotateX(-180deg);}
+
+/* ── CON DẤU 囍 ──
+   Đặt ở giữa mép nắp (overlap giữa flap và thân bì) */
+.env-seal{
+  position:absolute;
+  top:44%;left:50%;
+  transform:translate(-50%,-50%);
   width:56px;height:56px;border-radius:50%;
   background:radial-gradient(circle at 35% 35%,#e0ba7a,var(--gold));
   display:flex;align-items:center;justify-content:center;
   font-family:var(--fh);font-size:22px;color:var(--red2);font-weight:700;
   box-shadow:0 3px 14px rgba(0,0,0,.4),inset 0 1px 3px rgba(255,255,255,.3);
-  z-index:13;cursor:pointer;transition:opacity .35s,transform .35s;}
-.env-seal.gone{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.4);}
-.env-card{position:absolute;top:6%;left:4%;width:92%;
-  background:var(--cream);border:1px solid var(--goldlt);
-  padding:18px 14px 14px;text-align:center;z-index:3;
-  opacity:0;transform:translateY(18px);
-  transition:opacity .65s .35s,transform .65s .35s;
-  box-shadow:0 6px 24px rgba(0,0,0,.22);}
-.env-card.out{opacity:1;transform:translateY(-12px);}
-.ec-chi{font-family:var(--fh);font-size:32px;color:var(--red);line-height:1;}
-.ec-names{font-family:var(--fs);font-size:clamp(16px,4vw,24px);font-weight:700;color:var(--red2);margin:4px 0;}
-.ec-img{width:100%;max-height:160px;object-fit:cover;object-position:top center;
-  border:2px solid var(--goldlt);display:block;margin:8px auto 6px;}
-.ec-date{font-family:var(--fn);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.18em;}
+  z-index:16;cursor:pointer;
+  transition:opacity .4s ease, transform .4s ease;
+  will-change:transform,opacity;
+}
+/* Tan biến: mờ dần + xoay + co nhỏ */
+.env-seal.gone{
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,-50%) rotate(180deg) scale(.2);
+}
+
+/* ── CARD bên trong ── */
+.env-card{
+  position:relative;z-index:1;
+  background:var(--cream);
+  border:1px solid var(--goldlt);
+  padding:14px 12px 12px;
+  text-align:center;
+  /* ẩn ban đầu, trượt lên khi mở */
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .7s .4s ease, transform .7s .4s ease;
+  box-shadow:0 6px 24px rgba(0,0,0,.22);
+}
+.env-card.out{opacity:1;transform:translateY(0);}
+
+.ec-chi{font-family:var(--fh);font-size:28px;color:var(--red);line-height:1;margin-bottom:2px;}
+.ec-names{font-family:var(--fs);font-size:clamp(14px,3.8vw,22px);font-weight:700;color:var(--red2);margin:2px 0 6px;}
+
+/* ── ẢNH 1 TO bên trong card ── */
+.ec-photo-single{
+  position:relative;
+  overflow:hidden;
+  line-height:0;
+  margin:0 0 8px;
+  aspect-ratio:3/2;
+  background:var(--goldpale);
+  border:1.5px solid var(--goldlt);
+}
+.ec-photo-single img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:top center;
+  display:block;
+}
+.ec-photo-single .ec-photo-lbl{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(42,5,7,.72));
+  padding:28px 8px 8px;
+  font-family:var(--fs);font-size:clamp(13px,3.5vw,18px);font-weight:700;
+  color:var(--goldlt);text-align:center;
+  pointer-events:none;
+  letter-spacing:.04em;
+}
+
+.ec-date{font-family:var(--fn);font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.18em;}
 .env-hint{font-family:var(--fn);font-size:12px;font-weight:500;
   color:rgba(255,255,255,.5);letter-spacing:.22em;
   text-align:center;margin-top:18px;position:relative;z-index:5;
@@ -149,41 +230,76 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 #cvs{position:fixed;inset:0;pointer-events:none;z-index:9999;display:none;}
 
 /* ════════════════════════════════
+   NÚT NHẠC NỔI
+════════════════════════════════ */
+#musicBtn{
+  position:fixed;bottom:24px;right:20px;z-index:8000;
+  width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#e0ba7a,var(--gold));
+  border:2px solid rgba(255,255,255,.3);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0 rgba(201,169,110,.6);
+  transition:transform .2s;
+  -webkit-tap-highlight-color:transparent;
+  animation:fadeUp .9s 1.6s both;
+}
+#musicBtn:hover{transform:scale(1.1);}
+#musicBtn.playing{
+  animation:fadeUp .9s 1.6s both, pulse-ring 1.6s ease-in-out infinite;
+}
+@keyframes pulse-ring{
+  0%  {box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0   rgba(201,169,110,.6);}
+  60% {box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 12px rgba(201,169,110,.0);}
+  100%{box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 0   rgba(201,169,110,.0);}
+}
+#musicIcon{font-size:22px;line-height:1;color:var(--red2);pointer-events:none;
+  transition:transform .3s;display:block;}
+#musicBtn.playing #musicIcon{animation:spin-note 4s linear infinite;}
+@keyframes spin-note{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+#musicLabel{
+  position:fixed;bottom:8px;right:14px;z-index:8000;
+  font-family:var(--fn);font-size:9px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);text-align:center;width:52px;
+  pointer-events:none;
+  animation:fadeUp .9s 1.6s both;
+}
+
+/* ════════════════════════════════
    §2 GIA ĐÌNH HAI BÊN
 ════════════════════════════════ */
-.fam-grid{display:grid;grid-template-columns:1fr 64px 1fr;
-  max-width:860px;margin:32px auto 0;}
-@media(max-width:560px){
-  .fam-grid{grid-template-columns:1fr;}
-  .fam-div{flex-direction:row;padding:14px 20px;height:auto;}
-  .fam-div .vl{width:50px;height:1px;min-height:0;}
+.fam-grid{
+  display:grid;
+  grid-template-columns:1fr 44px 1fr;
+  max-width:860px;margin:32px auto 0;
 }
-.fam-side{padding:22px 26px;text-align:center;}
-.fam-ttl{font-family:var(--fs);font-size:clamp(22px,4vw,30px);color:var(--gold);margin-bottom:18px;display:block;}
-.fam-p{font-family:var(--fn);font-size:clamp(14px,2.5vw,16px);font-weight:400;
-  color:rgba(255,255,255,.9);line-height:2;}
+/* Giữ layout ngang trên mọi màn hình — KHÔNG stack dọc */
+.fam-side{padding:16px 10px;text-align:center;}
+.fam-ttl{font-family:var(--fs);font-size:clamp(16px,4.5vw,30px);color:var(--gold);margin-bottom:12px;display:block;}
+.fam-p{font-family:var(--fn);font-size:clamp(11px,2.8vw,16px);font-weight:400;
+  color:rgba(255,255,255,.9);line-height:1.9;}
 .fam-p b{font-weight:700;color:var(--white);}
-.fam-sub{margin-top:22px;padding-top:18px;border-top:1px solid rgba(201,169,110,.3);}
-.fam-role{font-family:var(--fn);font-size:10px;font-weight:700;letter-spacing:.42em;
-  text-transform:uppercase;color:var(--goldlt);margin-bottom:6px;opacity:.8;}
-.fam-name{font-family:var(--fh);font-size:clamp(22px,4.5vw,34px);font-weight:700;color:var(--white);}
-.fam-div{display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:6px;}
-.vl{width:1px;flex:1;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.55),transparent);min-height:50px;}
+.fam-sub{margin-top:16px;padding-top:14px;border-top:1px solid rgba(201,169,110,.3);}
+.fam-role{font-family:var(--fn);font-size:clamp(8px,2vw,10px);font-weight:700;letter-spacing:.38em;
+  text-transform:uppercase;color:var(--goldlt);margin-bottom:4px;opacity:.8;}
+.fam-name{font-family:var(--fh);font-size:clamp(18px,5vw,34px);font-weight:700;color:var(--white);}
+.fam-div{display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;}
+.vl{width:1px;flex:1;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.55),transparent);min-height:40px;}
 .fdot{width:7px;height:7px;background:var(--gold);border-radius:50%;flex-shrink:0;}
-.chi-v{font-family:var(--fh);font-size:clamp(36px,7vw,54px);color:var(--gold);
-  line-height:1;writing-mode:vertical-rl;padding:6px 0;}
+.chi-v{font-family:var(--fh);font-size:clamp(26px,6vw,48px);color:var(--gold);
+  line-height:1;writing-mode:vertical-rl;padding:4px 0;}
 
 /* Location under family */
 .fam-loc{
   max-width:860px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 64px 1fr;
+  display:grid;grid-template-columns:1fr 44px 1fr;
   padding:0 0 10px;
 }
-@media(max-width:560px){.fam-loc{grid-template-columns:1fr;}}
-.fam-loc-side{text-align:center;padding:0 26px 16px;}
-.fam-loc-txt{font-family:var(--fn);font-size:13px;font-weight:400;
+.fam-loc-side{text-align:center;padding:0 8px 16px;}
+.fam-loc-txt{font-family:var(--fn);font-size:clamp(10px,2.5vw,13px);font-weight:400;
   color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;}
-.fam-loc-gap{} /* empty middle */
+.fam-loc-gap{}
 
 /* ════════════════════════════════
    §3 CÔ DÂU & CHÚ RỂ
@@ -410,7 +526,6 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
 @media(max-width:480px){
   .inv-frame{padding:34px 18px;}
   .rsvp-box{padding:28px 18px;border-radius:14px;}
-  .fam-loc{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -432,21 +547,44 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
   <p class="h-save">✦ &nbsp; Save the Date &nbsp; ✦</p>
   <h1 class="h-names">Thiệp Báo Hỷ</h1>
 
+  <!-- Couple photo shown above envelope -->
+  <div class="hero-photo-wrap">
+    <img src="LXD_5566.jpg" class="hero-couple-img" alt="Cô dâu chú rể"
+      onerror="this.parentElement.style.display='none'">
+  </div>
 
   <div class="env-wrap">
     <div class="env-box">
       <div class="env-base">
-        <div class="env-sb"></div>
-        <div class="env-sl"></div>
-        <div class="env-sr"></div>
+
+        <!-- Card nằm trong luồng → quyết định chiều cao bì thư -->
         <div class="env-card" id="eCard">
           <div class="ec-chi">囍</div>
           <div class="ec-names">Trung Dũng &amp; Phương Thảo</div>
-          <img src="LXD_6256.jpg" class="ec-img" alt="Cô dâu chú rể" onerror="this.style.display='none'">
+
+          <!-- 1 ảnh to cô dâu & chú rể -->
+          <div class="ec-photo-single">
+            <img src="LXD_5566.jpg" alt="Trung Dũng &amp; Phương Thảo"
+              onerror="this.parentElement.style.background='linear-gradient(160deg,#9f0f15,#7a0b10)';">
+            <div class="ec-photo-lbl">Trung Dũng &amp; Phương Thảo</div>
+          </div>
+
           <div class="ec-date num">22 · 03 · 2026</div>
         </div>
-        <div class="env-flap" id="eFlap"></div>
+
+        <!-- Trang trí bì thư overlay -->
+        <div class="env-sl"></div>
+        <div class="env-sr"></div>
+        <div class="env-sb"></div>
+
+        <!-- Nắp 3D — wrap riêng để perspective không bị ảnh hưởng -->
+        <div class="env-flap-outer">
+          <div class="env-flap" id="eFlap"></div>
+        </div>
+
+        <!-- Con dấu 囍 — tan biến khi mở -->
         <div class="env-seal" id="eSeal">囍</div>
+
       </div>
     </div>
   </div>
@@ -505,29 +643,7 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
   </div>
 </section>
 
-<!-- ══════════════════════════════════════
-  §3 CÔ DÂU & CHÚ RỂ
-══════════════════════════════════════ -->
-<div class="stripe"></div>
-<section class="sec bg-cr" id="couple">
-  <div style="text-align:center;" class="rv">
-    <span class="slb slb-red">✦ &nbsp; Đôi Uyên Ương &nbsp; ✦</span>
-    <h2 class="sh sh-dk">Cô Dâu &amp; Chú Rể</h2>
-  </div>
-  <div class="cp-grid rv d1">
-    <div class="cp-card">
-      <img src="LXD_5672.jpg" class="cp-img" alt="Phương Thảo" onerror="this.style.background='#c9a96e';">
-      <div class="cp-role">Cô Dâu</div>
-      <div class="cp-name">Phương Thảo</div>
-    </div>
-    <div><div class="chi-mid">囍</div></div>
-    <div class="cp-card">
-      <img src="LXD_6256.jpg" class="cp-img" alt="Trung Dũng" onerror="this.style.background='#9f0f15';">
-      <div class="cp-role">Chú Rể</div>
-      <div class="cp-name">Trung Dũng</div>
-    </div>
-  </div>
-</section>
+
 
 <!-- ══════════════════════════════════════
   §4 LỊCH TRÌNH ĐÁM CƯỚI
@@ -815,18 +931,239 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
   SCRIPTS
 ══════════════════════════════════════ -->
 <script>
-/* ── Scroll Reveal ── */
-const ro=new IntersectionObserver(es=>{
-  es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});
-},{threshold:.09});
+/* ══════════════════════════════════════
+   CANVAS & PARTICLE ENGINE
+══════════════════════════════════════ */
+const cv = document.getElementById('cvs');
+const cx = cv.getContext('2d');
+let particles = [];
+let animId = null;
+let canvasActive = false;
+
+function resizeCanvas(){
+  cv.width = innerWidth;
+  cv.height = innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+/* ── Màu sắc chủ đề ── */
+const COLS = ['#9f0f15','#c41a22','#c9a96e','#e8d5b0','#ffffff','#f9f2e5','#ffdd55','#ff6b6b','#ffd700'];
+
+/* ── Tạo mảnh pháo giấy confetti ── */
+function spawnConfetti(x, y, count){
+  for(let i=0;i<count;i++){
+    const angle = Math.random()*Math.PI*2;
+    const speed = Math.random()*8+2;
+    particles.push({
+      type:'confetti',
+      x, y,
+      vx: Math.cos(angle)*speed*(Math.random()*.6+.7),
+      vy: Math.sin(angle)*speed*(Math.random()*.6+.7) - Math.random()*4,
+      w: Math.random()*10+4,
+      h: Math.random()*5+2,
+      r: Math.random()*Math.PI*2,
+      dr: (Math.random()-.5)*.25,
+      c: COLS[Math.floor(Math.random()*COLS.length)],
+      op:1, fade:.012+Math.random()*.008,
+      gravity:.18
+    });
+  }
+}
+
+/* ── Tạo đạn pháo hoa ── */
+function spawnFirework(x, y){
+  const burstCols = [COLS[Math.floor(Math.random()*COLS.length)], COLS[Math.floor(Math.random()*COLS.length)]];
+  const count = 48 + Math.floor(Math.random()*24);
+  for(let i=0;i<count;i++){
+    const angle = (i/count)*Math.PI*2;
+    const speed = Math.random()*5+2;
+    particles.push({
+      type:'spark',
+      x, y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      len: Math.random()*6+3,
+      c: burstCols[i%2],
+      op:1, fade:.018+Math.random()*.012,
+      gravity:.06, trail:[]
+    });
+  }
+}
+
+/* ── Rocket bay lên rồi nổ ── */
+function launchRocket(targetX){
+  const startY = innerHeight + 10;
+  const peakY  = innerHeight * (0.15 + Math.random()*0.3);
+  const tx     = targetX || (innerWidth*0.2 + Math.random()*innerWidth*0.6);
+  let   py     = startY;
+  const speed  = 14 + Math.random()*8;
+  const dy     = (peakY - startY);
+  const steps  = Math.abs(dy/speed);
+  let   step   = 0;
+  const trail  = [];
+
+  function rise(){
+    step++;
+    py = startY + (dy*(step/steps));
+    trail.push({x:tx, y:py, op:.9});
+    // Vẽ trail rocket
+    trail.forEach((t,i)=>{ t.op -= .08; });
+    if(step < steps){
+      requestAnimationFrame(rise);
+    } else {
+      // Nổ pháo hoa tại đỉnh
+      spawnFirework(tx, peakY);
+      spawnConfetti(tx, peakY, 30);
+    }
+  }
+  rise();
+}
+
+/* ── Vòng lặp animation chính ── */
+function animLoop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+
+  particles = particles.filter(p => p.op > 0);
+
+  particles.forEach(p => {
+    p.op -= p.fade;
+    p.vx *= .97;
+    p.vy += p.gravity;
+    p.x  += p.vx;
+    p.y  += p.vy;
+
+    if(p.type === 'confetti'){
+      p.r += p.dr;
+      cx.save();
+      cx.translate(p.x, p.y);
+      cx.rotate(p.r);
+      cx.globalAlpha = Math.max(0, p.op);
+      cx.fillStyle   = p.c;
+      cx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      cx.restore();
+    } else if(p.type === 'spark'){
+      cx.save();
+      cx.globalAlpha = Math.max(0, p.op);
+      cx.strokeStyle = p.c;
+      cx.lineWidth   = 1.5;
+      cx.beginPath();
+      cx.moveTo(p.x, p.y);
+      cx.lineTo(p.x - p.vx*p.len, p.y - p.vy*p.len);
+      cx.stroke();
+      cx.restore();
+    }
+  });
+
+  if(particles.length > 0 || canvasActive){
+    animId = requestAnimationFrame(animLoop);
+  } else {
+    cx.clearRect(0,0,cv.width,cv.height);
+    cv.style.display='none';
+    animId = null;
+  }
+}
+
+function startAnim(){
+  cv.style.display='block';
+  if(!animId) animId = requestAnimationFrame(animLoop);
+}
+
+/* ── boom(): pháo giấy từ trên xuống (mở thiệp) ── */
+function boom(){
+  resizeCanvas();
+  startAnim();
+  canvasActive = true;
+  // Mưa confetti từ trên
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      for(let j=0;j<28;j++){
+        particles.push({
+          type:'confetti',
+          x: Math.random()*cv.width,
+          y: -10,
+          vx:(Math.random()-.5)*4,
+          vy: Math.random()*4+1,
+          w: Math.random()*11+4, h: Math.random()*6+2,
+          r: Math.random()*Math.PI*2, dr:(Math.random()-.5)*.2,
+          c: COLS[Math.floor(Math.random()*COLS.length)],
+          op:1, fade:.007+Math.random()*.006, gravity:.15
+        });
+      }
+    }, i*120);
+  }
+  // Thêm vài quả pháo hoa
+  setTimeout(()=>launchRocket(cv.width*.3), 200);
+  setTimeout(()=>launchRocket(cv.width*.7), 600);
+  setTimeout(()=>launchRocket(cv.width*.5), 1000);
+
+  setTimeout(()=>{ canvasActive=false; }, 4500);
+}
+
+/* ── clickBurst(): pháo tại vị trí click/tap ── */
+let burstCooldown = false;
+function clickBurst(x, y){
+  if(burstCooldown) return;
+  burstCooldown = true;
+  setTimeout(()=>burstCooldown=false, 800);
+
+  resizeCanvas();
+  startAnim();
+  canvasActive = true;
+  spawnConfetti(x, y, 60);
+  spawnFirework(x, y);
+  setTimeout(()=>{ canvasActive=false; }, 3500);
+}
+
+/* ── sectionBurst(): pháo nhẹ khi vào section mới ── */
+let lastSection = null;
+function sectionBurst(){
+  resizeCanvas();
+  startAnim();
+  canvasActive = true;
+  // 2 rocket từ 2 góc
+  launchRocket(cv.width * (.15 + Math.random()*.2));
+  setTimeout(()=>launchRocket(cv.width * (.65 + Math.random()*.2)), 300);
+  spawnConfetti(cv.width/2, cv.height*.4, 40);
+  setTimeout(()=>{ canvasActive=false; }, 4000);
+}
+
+/* ── Scroll Reveal + section trigger ── */
+const sections = document.querySelectorAll('section[id]');
+const ro = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('on');
+      // Kích hoạt pháo khi vào section mới (trừ hero)
+      if(e.target.id !== 'hero' && e.target.id !== lastSection){
+        lastSection = e.target.id;
+        sectionBurst();
+      }
+    }
+  });
+},{threshold:.3});
 document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+sections.forEach(s=>ro.observe(s));
+
+/* ── Click / tap bất kỳ đâu → pháo tại chỗ ── */
+document.addEventListener('click', e=>{
+  // Không trigger nếu đang click button/input/link
+  const tag = e.target.tagName.toLowerCase();
+  if(['button','input','select','textarea','a'].includes(tag)) return;
+  clickBurst(e.clientX, e.clientY);
+});
+document.addEventListener('touchend', e=>{
+  const tag = e.target.tagName.toLowerCase();
+  if(['button','input','select','textarea','a'].includes(tag)) return;
+  const t = e.changedTouches[0];
+  clickBurst(t.clientX, t.clientY);
+}, {passive:true});
 
 /* ── URL guest name: ?ten=Nguyen+Van+A ── */
 const tn=new URLSearchParams(location.search).get('ten');
 if(tn){
   const el=document.getElementById('guestName');
-  el.innerHTML=decodeURIComponent(tn);
-  el.style.color='var(--red2)';el.style.fontStyle='italic';
+  if(el){ el.innerHTML=decodeURIComponent(tn); el.style.color='var(--red2)'; el.style.fontStyle='italic'; }
 }
 
 /* ── Envelope open ── */
@@ -836,45 +1173,10 @@ function openEnv(){
   document.getElementById('eFlap').classList.add('open');
   document.getElementById('eSeal').classList.add('gone');
   document.getElementById('eHint').style.opacity='0';
-  setTimeout(()=>{document.getElementById('eCard').classList.add('out');boom();},650);
+  setTimeout(()=>{ document.getElementById('eCard').classList.add('out'); boom(); }, 650);
 }
 
-/* ── Confetti ── */
-function boom(){
-  const cv=document.getElementById('cvs');
-  cv.style.display='block';cv.width=innerWidth;cv.height=innerHeight;
-  const cx=cv.getContext('2d');
-  const cols=['#9f0f15','#c9a96e','#e8d5b0','#fff','#c41a22','#f9f2e5'];
-  const ps=Array.from({length:220},()=>({
-    x:Math.random()*cv.width,y:Math.random()*cv.height-cv.height,
-    w:Math.random()*11+4,h:Math.random()*7+3,
-    r:Math.random()*Math.PI*2,
-    dx:(Math.random()-.5)*4,dy:Math.random()*5+2,
-    dr:(Math.random()-.5)*.17,
-    c:cols[Math.floor(Math.random()*cols.length)],op:1
-  }));
-  let f=0;
-  (function draw(){
-    cx.clearRect(0,0,cv.width,cv.height);
-    ps.forEach(p=>{
-      cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);
-      cx.globalAlpha=Math.max(0,p.op);cx.fillStyle=p.c;
-      cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();
-      p.x+=p.dx;p.y+=p.dy;p.r+=p.dr;
-      if(f>100)p.op-=.013;
-    });
-    f++;
-    if(f<230)requestAnimationFrame(draw);
-    else{cx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}
-  })();
-}
-
-/* ── RSVP → Google Forms ──
-   Hướng dẫn kết nối Google Sheets:
-   1. Tạo Google Form 3 câu hỏi: Họ và Tên · Tham dự · Lời nhắn
-   2. Inspect form để lấy entry IDs (entry.XXXXXXXXX)
-   3. Thay FORM_URL và ENTRIES bên dưới
-*/
+/* ── RSVP → Google Forms ── */
 const FORM_URL='https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
 const ENTRIES={name:'entry.000000001',attend:'entry.000000002',msg:'entry.000000003'};
 
@@ -902,6 +1204,70 @@ function closeQR(e){
   if(e.target===document.getElementById('qrOv'))
     document.getElementById('qrOv').classList.remove('show');
 }
+
+/* ══════════════════════════════════════
+   NHẠC NỀN
+══════════════════════════════════════ */
+const music   = document.getElementById('bgMusic');
+const btn     = document.getElementById('musicBtn');
+const lbl     = document.getElementById('musicLabel');
+let   isPlaying = false;
+
+function toggleMusic(){
+  if(isPlaying){
+    music.pause();
+    btn.classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '🎵';
+    lbl.textContent = 'Nhạc';
+    isPlaying = false;
+  } else {
+    music.play().then(()=>{
+      btn.classList.add('playing');
+      document.getElementById('musicIcon').textContent = '🎶';
+      lbl.textContent = 'Đang phát';
+      isPlaying = true;
+    }).catch(()=>{
+      // Trình duyệt chặn autoplay — người dùng cần tap lại
+      lbl.textContent = 'Tap lại';
+    });
+  }
+}
+
+/* Tự động phát khi người dùng tương tác lần đầu */
+let autoStarted = false;
+function tryAutoPlay(){
+  if(autoStarted || isPlaying) return;
+  autoStarted = true;
+  music.volume = 0.55;
+  music.play().then(()=>{
+    btn.classList.add('playing');
+    document.getElementById('musicIcon').textContent = '🎶';
+    lbl.textContent = 'Đang phát';
+    isPlaying = true;
+  }).catch(()=>{ autoStarted = false; });
+}
+document.addEventListener('click',  tryAutoPlay, {once:true});
+document.addEventListener('touchend', tryAutoPlay, {once:true, passive:true});
 </script>
+<!-- ══════════════════════════════════════
+  NHẠC NỀN
+══════════════════════════════════════ -->
+
+<!-- 
+  ► HƯỚNG DẪN: Đặt file nhạc cùng thư mục với file HTML này
+    Đổi "nhac-cuoi.mp3" thành tên file nhạc của bạn
+    Hỗ trợ: .mp3  .ogg  .wav  .m4a
+-->
+<audio id="bgMusic" loop preload="auto">
+  <source src="nhac-cuoi.mp3" type="audio/mpeg">
+  <source src="nhac-cuoi.ogg" type="audio/ogg">
+</audio>
+
+<!-- Nút nhạc nổi góc phải -->
+<button id="musicBtn" onclick="toggleMusic()" title="Bật / Tắt nhạc">
+  <span id="musicIcon">🎵</span>
+</button>
+<div id="musicLabel">Nhạc</div>
+
 </body>
 </html>
