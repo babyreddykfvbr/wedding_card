@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-   <meta property="og:title" content="Thiệp Cưới Trung Dũng & Phương Thảo">
+ <meta property="og:title" content="Thiệp Cưới Trung Dũng & Phương Thảo">
 <meta property="og:description" content="Trân trọng kính mời tham dự lễ cưới 22.03.2026">
 <meta property="og:image" content="LXD_5566.jpg">
 <meta property="og:type" content="website">
@@ -544,7 +544,6 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
   §1 HERO – PHONG BAO THIỆP CƯỚI
 ══════════════════════════════════════ -->
 <section id="hero" onclick="openEnv()">
-document.getElementById("bgMusic").play().catch(()=>{});
   <!-- Corner flourishes -->
   <div class="crn crn-tl"><svg viewBox="0 0 148 148" fill="none"><path d="M12 136 Q12 12 136 12" stroke="#c9a96e" stroke-width="1.6" fill="none"/><path d="M24 136 Q24 24 136 24" stroke="#c9a96e" stroke-width=".55" fill="none"/><circle cx="12" cy="12" r="4" fill="#c9a96e"/><line x1="12" y1="12" x2="52" y2="12" stroke="#c9a96e" stroke-width="1.3"/><line x1="12" y1="12" x2="12" y2="52" stroke="#c9a96e" stroke-width="1.3"/><circle cx="52" cy="12" r="2.5" fill="#c9a96e"/><circle cx="12" cy="52" r="2.5" fill="#c9a96e"/></svg></div>
   <div class="crn crn-tr"><svg viewBox="0 0 148 148" fill="none"><path d="M12 136 Q12 12 136 12" stroke="#c9a96e" stroke-width="1.6" fill="none"/><path d="M24 136 Q24 24 136 24" stroke="#c9a96e" stroke-width=".55" fill="none"/><circle cx="12" cy="12" r="4" fill="#c9a96e"/><line x1="12" y1="12" x2="52" y2="12" stroke="#c9a96e" stroke-width="1.3"/><line x1="12" y1="12" x2="12" y2="52" stroke="#c9a96e" stroke-width="1.3"/></svg></div>
@@ -936,368 +935,219 @@ document.getElementById("bgMusic").play().catch(()=>{});
   SCRIPTS
 ══════════════════════════════════════ -->
 <script>
-/* ══════════════════════════════════════
-   CANVAS & PARTICLE ENGINE
-══════════════════════════════════════ */
-const cv = document.getElementById('cvs');
-const cx = cv.getContext('2d');
-let particles = [];
-let animId = null;
-let canvasActive = false;
 
-function resizeCanvas(){
-  cv.width = innerWidth;
-  cv.height = innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+/* ===============================
+   MỞ PHONG BÌ THIỆP
+================================ */
 
-/* ── Màu sắc chủ đề ── */
-const COLS = ['#9f0f15','#c41a22','#c9a96e','#e8d5b0','#ffffff','#f9f2e5','#ffdd55','#ff6b6b','#ffd700'];
-
-/* ── Tạo mảnh pháo giấy confetti ── */
-function spawnConfetti(x, y, count){
-  for(let i=0;i<count;i++){
-    const angle = Math.random()*Math.PI*2;
-    const speed = Math.random()*8+2;
-    particles.push({
-      type:'confetti',
-      x, y,
-      vx: Math.cos(angle)*speed*(Math.random()*.6+.7),
-      vy: Math.sin(angle)*speed*(Math.random()*.6+.7) - Math.random()*4,
-      w: Math.random()*10+4,
-      h: Math.random()*5+2,
-      r: Math.random()*Math.PI*2,
-      dr: (Math.random()-.5)*.25,
-      c: COLS[Math.floor(Math.random()*COLS.length)],
-      op:1, fade:.012+Math.random()*.008,
-      gravity:.18
-    });
-  }
-}
-
-/* ── Tạo đạn pháo hoa ── */
-function spawnFirework(x, y){
-  const burstCols = [COLS[Math.floor(Math.random()*COLS.length)], COLS[Math.floor(Math.random()*COLS.length)]];
-  const count = 48 + Math.floor(Math.random()*24);
-  for(let i=0;i<count;i++){
-    const angle = (i/count)*Math.PI*2;
-    const speed = Math.random()*5+2;
-    particles.push({
-      type:'spark',
-      x, y,
-      vx: Math.cos(angle)*speed,
-      vy: Math.sin(angle)*speed,
-      len: Math.random()*6+3,
-      c: burstCols[i%2],
-      op:1, fade:.018+Math.random()*.012,
-      gravity:.06, trail:[]
-    });
-  }
-}
-
-/* ── Rocket bay lên rồi nổ ── */
-function launchRocket(targetX){
-  const startY = innerHeight + 10;
-  const peakY  = innerHeight * (0.15 + Math.random()*0.3);
-  const tx     = targetX || (innerWidth*0.2 + Math.random()*innerWidth*0.6);
-  let   py     = startY;
-  const speed  = 14 + Math.random()*8;
-  const dy     = (peakY - startY);
-  const steps  = Math.abs(dy/speed);
-  let   step   = 0;
-  const trail  = [];
-
-  function rise(){
-    step++;
-    py = startY + (dy*(step/steps));
-    trail.push({x:tx, y:py, op:.9});
-    // Vẽ trail rocket
-    trail.forEach((t,i)=>{ t.op -= .08; });
-    if(step < steps){
-      requestAnimationFrame(rise);
-    } else {
-      // Nổ pháo hoa tại đỉnh
-      spawnFirework(tx, peakY);
-      spawnConfetti(tx, peakY, 30);
-    }
-  }
-  rise();
-}
-
-/* ── Vòng lặp animation chính ── */
-function animLoop(){
-  cx.clearRect(0,0,cv.width,cv.height);
-
-  particles = particles.filter(p => p.op > 0);
-
-  particles.forEach(p => {
-    p.op -= p.fade;
-    p.vx *= .97;
-    p.vy += p.gravity;
-    p.x  += p.vx;
-    p.y  += p.vy;
-
-    if(p.type === 'confetti'){
-      p.r += p.dr;
-      cx.save();
-      cx.translate(p.x, p.y);
-      cx.rotate(p.r);
-      cx.globalAlpha = Math.max(0, p.op);
-      cx.fillStyle   = p.c;
-      cx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      cx.restore();
-    } else if(p.type === 'spark'){
-      cx.save();
-      cx.globalAlpha = Math.max(0, p.op);
-      cx.strokeStyle = p.c;
-      cx.lineWidth   = 1.5;
-      cx.beginPath();
-      cx.moveTo(p.x, p.y);
-      cx.lineTo(p.x - p.vx*p.len, p.y - p.vy*p.len);
-      cx.stroke();
-      cx.restore();
-    }
-  });
-
-  if(particles.length > 0 || canvasActive){
-    if(particles.length > 0){
-  animId = requestAnimationFrame(animLoop);
-}else{
-  cancelAnimationFrame(animId);
-}
-  } else {
-    cx.clearRect(0,0,cv.width,cv.height);
-    cv.style.display='none';
-    animId = null;
-  }
-}
-
-function startAnim(){
-  cv.style.display='block';
-  if(!animId) animId = requestAnimationFrame(animLoop);
-}
-
-/* ── boom(): pháo giấy từ trên xuống (mở thiệp) ── */
-function boom(){
-  resizeCanvas();
-  startAnim();
-  canvasActive = true;
-  // Mưa confetti từ trên
-  for(let i=0;i<8;i++){
-    setTimeout(()=>{
-      for(let j=0;j<28;j++){
-        particles.push({
-          type:'confetti',
-          x: Math.random()*cv.width,
-          y: -10,
-          vx:(Math.random()-.5)*4,
-          vy: Math.random()*4+1,
-          w: Math.random()*11+4, h: Math.random()*6+2,
-          r: Math.random()*Math.PI*2, dr:(Math.random()-.5)*.2,
-          c: COLS[Math.floor(Math.random()*COLS.length)],
-          op:1, fade:.007+Math.random()*.006, gravity:.15
-        });
-      }
-    }, i*120);
-  }
-  // Thêm vài quả pháo hoa
-  setTimeout(()=>launchRocket(cv.width*.3), 200);
-  setTimeout(()=>launchRocket(cv.width*.7), 600);
-  setTimeout(()=>launchRocket(cv.width*.5), 1000);
-
-  setTimeout(()=>{ canvasActive=false; }, 4500);
-}
-
-/* ── clickBurst(): pháo tại vị trí click/tap ── */
-let burstCooldown = false;
-function clickBurst(x, y){
-  if(burstCooldown) return;
-  burstCooldown = true;
-  setTimeout(()=>burstCooldown=false, 800);
-
-  resizeCanvas();
-  startAnim();
-  canvasActive = true;
-  spawnConfetti(x, y, 60);
-  spawnFirework(x, y);
-  setTimeout(()=>{ canvasActive=false; }, 3500);
-}
-
-/* ── sectionBurst(): pháo nhẹ khi vào section mới ── */
-let lastSection = null;
-function sectionBurst(){
-  resizeCanvas();
-  startAnim();
-  canvasActive = true;
-  // 2 rocket từ 2 góc
-  launchRocket(cv.width * (.15 + Math.random()*.2));
-  setTimeout(()=>launchRocket(cv.width * (.65 + Math.random()*.2)), 300);
-  spawnConfetti(cv.width/2, cv.height*.4, 40);
-  setTimeout(()=>{ canvasActive=false; }, 4000);
-}
-
-/* ── Scroll Reveal + section trigger ── */
-const sections = document.querySelectorAll('section[id]');
-const ro = new IntersectionObserver(es=>{
-  es.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('on');
-      // Kích hoạt pháo khi vào section mới (trừ hero)
-      if(e.target.id !== 'hero' && e.target.id !== lastSection){
-        lastSection = e.target.id;
-        sectionBurst();
-      }
-    }
-  });
-},{threshold:.3});
-document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
-sections.forEach(s=>ro.observe(s));
-
-/* ── Click / tap bất kỳ đâu → pháo tại chỗ ── */
-document.addEventListener('click', e=>{
-  // Không trigger nếu đang click button/input/link
-  const tag = e.target.tagName.toLowerCase();
-  if(['button','input','select','textarea','a'].includes(tag)) return;
-  clickBurst(e.clientX, e.clientY);
-});
-document.addEventListener('touchend', e=>{
-  const tag = e.target.tagName.toLowerCase();
-  if(['button','input','select','textarea','a'].includes(tag)) return;
-  const t = e.changedTouches[0];
-  clickBurst(t.clientX, t.clientY);
-}, {passive:true});
-
-/* ── URL guest name: ?ten=Nguyen+Van+A ── */
-const tn=new URLSearchParams(location.search).get('ten');
-if(tn){
-  const el=document.getElementById('guestName');
-  if(el){ el.innerHTML=decodeURIComponent(tn); el.style.color='var(--red2)'; el.style.fontStyle='italic'; }
-}
-
-/* ── Envelope open ── */
 let opened=false;
 
 function openEnv(){
+  if(opened) return;
+  opened=true;
 
-if(opened) return;
-opened=true;
+  document.getElementById("eFlap").classList.add("open");
+  document.getElementById("eSeal").classList.add("gone");
+  document.getElementById("eCard").classList.add("out");
+  document.getElementById("eHint").style.display="none";
 
-const flap=document.getElementById('eFlap');
-const seal=document.getElementById('eSeal');
-const card=document.getElementById('eCard');
-const hint=document.getElementById('eHint');
-
-flap.classList.add('open');
-
-setTimeout(()=>{
-seal.classList.add('gone');
-},200);
-
-setTimeout(()=>{
-card.classList.add('out');
-hint.style.opacity=0;
-},600);
-
-function startParticles(){
-
-if(canvasActive) return;
-
-canvasActive=true;
-
-cv.style.display='block';
-
-animLoop();
-
-let i=0;
-
-const fw=setInterval(()=>{
-
-launchRocket();
-
-i++;
-
-if(i>4) clearInterval(fw);
-
-},900);
-
+  startFireworks();
 }
 
+/* ===============================
+   PHÁO HOA + CONFETTI
+================================ */
+
+const cv = document.getElementById("cvs");
+const ctx = cv.getContext("2d");
+
+function resize(){
+  cv.width=window.innerWidth;
+  cv.height=window.innerHeight;
 }
+resize();
+window.addEventListener("resize",resize);
 
-/* ── RSVP → Google Forms ── */
-const FORM_URL='https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
-const ENTRIES={name:'entry.000000001',attend:'entry.000000002',msg:'entry.000000003'};
+let particles=[];
 
-function doRSVP(){
-  const name=document.getElementById('rName').value.trim();
-  const att=document.getElementById('rAtt').value;
-  if(!name){alert('Vui lòng nhập họ và tên!');return;}
-  if(!att){alert('Vui lòng chọn xác nhận tham dự!');return;}
-  const msg=document.getElementById('rMsg').value;
-  if(!FORM_URL.includes('YOUR_FORM_ID')){
-    const fd=new FormData();
-    fd.append(ENTRIES.name,name);fd.append(ENTRIES.attend,att);fd.append(ENTRIES.msg,msg);
-    fetch(FORM_URL,{method:'POST',mode:'no-cors',body:fd}).catch(()=>{});
+function spawnFirework(x,y){
+
+  const count=80;
+
+  for(let i=0;i<count;i++){
+
+    const angle=Math.random()*Math.PI*2;
+    const speed=Math.random()*6+2;
+
+    particles.push({
+      x:x,
+      y:y,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed,
+      life:80,
+      color:`hsl(${Math.random()*360},80%,60%)`
+    });
+
   }
-  document.getElementById('rName').value='';
-  document.getElementById('rAtt').value='';
-  document.getElementById('rMsg').value='';
-  const ok=document.getElementById('rOK');
-  ok.style.display='block';
-  setTimeout(()=>ok.style.display='none',5000);
+
 }
 
-/* ── QR close ── */
-function closeQR(e){
-  if(e.target===document.getElementById('qrOv'))
-    document.getElementById('qrOv').classList.remove('show');
+function updateParticles(){
+
+  ctx.clearRect(0,0,cv.width,cv.height);
+
+  particles.forEach((p,i)=>{
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    p.vy+=0.04;
+    p.life--;
+
+    ctx.globalAlpha=p.life/80;
+    ctx.fillStyle=p.color;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fill();
+
+    if(p.life<=0){
+      particles.splice(i,1);
+    }
+
+  });
+
+  requestAnimationFrame(updateParticles);
+
 }
 
-/* ══════════════════════════════════════
+function startFireworks(){
+
+  cv.style.display="block";
+
+  for(let i=0;i<5;i++){
+
+    setTimeout(()=>{
+      spawnFirework(
+        Math.random()*cv.width,
+        Math.random()*cv.height*0.5
+      );
+    },i*400);
+
+  }
+
+  updateParticles();
+
+}
+
+
+/* ===============================
+   SCROLL REVEAL
+================================ */
+
+const rv=document.querySelectorAll(".rv");
+
+function reveal(){
+
+  const wh=window.innerHeight;
+
+  rv.forEach(el=>{
+
+    const top=el.getBoundingClientRect().top;
+
+    if(top<wh-80){
+      el.classList.add("on");
+    }
+
+  });
+
+}
+
+window.addEventListener("scroll",reveal);
+reveal();
+
+
+/* ===============================
    NHẠC NỀN
-══════════════════════════════════════ */
-const music   = document.getElementById('bgMusic');
-const btn     = document.getElementById('musicBtn');
-const lbl     = document.getElementById('musicLabel');
-let   isPlaying = false;
+================================ */
+
+const music=document.getElementById("bgMusic");
+
+let playing=false;
 
 function toggleMusic(){
-  if(isPlaying){
+
+  if(!playing){
+    music.play();
+    playing=true;
+    document.getElementById("musicBtn").classList.add("playing");
+  }else{
     music.pause();
-    btn.classList.remove('playing');
-    document.getElementById('musicIcon').textContent = '🎵';
-    lbl.textContent = 'Nhạc';
-    isPlaying = false;
-  } else {
-    music.play().then(()=>{
-      btn.classList.add('playing');
-      document.getElementById('musicIcon').textContent = '🎶';
-      lbl.textContent = 'Đang phát';
-      isPlaying = true;
-    }).catch(()=>{
-      // Trình duyệt chặn autoplay — người dùng cần tap lại
-      lbl.textContent = 'Tap lại';
-    });
+    playing=false;
+    document.getElementById("musicBtn").classList.remove("playing");
   }
+
 }
 
-/* Tự động phát khi người dùng tương tác lần đầu */
-let autoStarted = false;
-function tryAutoPlay(){
-  if(autoStarted || isPlaying) return;
-  autoStarted = true;
-  music.volume = 0.55;
-  music.play().then(()=>{
-    btn.classList.add('playing');
-    document.getElementById('musicIcon').textContent = '🎶';
-    lbl.textContent = 'Đang phát';
-    isPlaying = true;
-  }).catch(()=>{ autoStarted = false; });
+
+/* ===============================
+   RSVP GOOGLE SHEET
+================================ */
+
+function doRSVP(){
+
+  const name=document.getElementById("rName").value.trim();
+  const attend=document.getElementById("rAtt").value;
+  const msg=document.getElementById("rMsg").value;
+
+  if(!name || !attend){
+    alert("Vui lòng nhập đầy đủ thông tin");
+    return;
+  }
+
+  fetch("YOUR_GOOGLE_SCRIPT_URL",{
+
+    method:"POST",
+
+    body:JSON.stringify({
+      name:name,
+      attend:attend,
+      message:msg
+    })
+
+  })
+  .then(()=>{
+
+    document.getElementById("rOK").style.display="block";
+
+    document.getElementById("rName").value="";
+    document.getElementById("rAtt").value="";
+    document.getElementById("rMsg").value="";
+
+  })
+  .catch(()=>{
+
+    alert("Không gửi được phản hồi");
+
+  });
+
 }
-document.addEventListener('click',  tryAutoPlay, {once:true});
-document.addEventListener('touchend', tryAutoPlay, {once:true, passive:true});
+
+
+/* ===============================
+   QR POPUP
+================================ */
+
+function closeQR(e){
+
+  if(e.target.id==="qrOv"){
+    document.getElementById("qrOv").classList.remove("show");
+  }
+
+}
+
 </script>
+
 <!-- ══════════════════════════════════════
   NHẠC NỀN
 ══════════════════════════════════════ -->
