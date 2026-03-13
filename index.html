@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+   <meta property="og:title" content="Thiệp Cưới Trung Dũng & Phương Thảo">
+<meta property="og:description" content="Trân trọng kính mời tham dự lễ cưới 22.03.2026">
+<meta property="og:image" content="LXD_5566.jpg">
+<meta property="og:type" content="website">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thiệp Cưới – Trung Dũng &amp; Phương Thảo · 22.03.2026</title>
@@ -530,6 +534,9 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
 </style>
 </head>
 <body>
+   <audio id="bgMusic" loop>
+<source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <canvas id="cvs"></canvas>
 
@@ -537,7 +544,7 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
   §1 HERO – PHONG BAO THIỆP CƯỚI
 ══════════════════════════════════════ -->
 <section id="hero" onclick="openEnv()">
-
+document.getElementById("bgMusic").play().catch(()=>{});
   <!-- Corner flourishes -->
   <div class="crn crn-tl"><svg viewBox="0 0 148 148" fill="none"><path d="M12 136 Q12 12 136 12" stroke="#c9a96e" stroke-width="1.6" fill="none"/><path d="M24 136 Q24 24 136 24" stroke="#c9a96e" stroke-width=".55" fill="none"/><circle cx="12" cy="12" r="4" fill="#c9a96e"/><line x1="12" y1="12" x2="52" y2="12" stroke="#c9a96e" stroke-width="1.3"/><line x1="12" y1="12" x2="12" y2="52" stroke="#c9a96e" stroke-width="1.3"/><circle cx="52" cy="12" r="2.5" fill="#c9a96e"/><circle cx="12" cy="52" r="2.5" fill="#c9a96e"/></svg></div>
   <div class="crn crn-tr"><svg viewBox="0 0 148 148" fill="none"><path d="M12 136 Q12 12 136 12" stroke="#c9a96e" stroke-width="1.6" fill="none"/><path d="M24 136 Q24 24 136 24" stroke="#c9a96e" stroke-width=".55" fill="none"/><circle cx="12" cy="12" r="4" fill="#c9a96e"/><line x1="12" y1="12" x2="52" y2="12" stroke="#c9a96e" stroke-width="1.3"/><line x1="12" y1="12" x2="12" y2="52" stroke="#c9a96e" stroke-width="1.3"/></svg></div>
@@ -866,9 +873,7 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
       <button class="qr-cls" onclick="document.getElementById('qrOv').classList.remove('show')">×</button>
     </div>
     <div class="qr-mbody">
-      <div class="qr-ph">
-        <div style="font-size:40px;">📱</div>
-        <div style="font-weight:600;">Đặt ảnh QR Banking tại đây</div>
+      <img src="qr.png" style="width:190px;border-radius:6px;">
         <div style="font-size:11px;opacity:.55;">(thay bằng ảnh QR thực)</div>
       </div>
       <div class="qr-info">
@@ -1056,7 +1061,11 @@ function animLoop(){
   });
 
   if(particles.length > 0 || canvasActive){
-    animId = requestAnimationFrame(animLoop);
+    if(particles.length > 0){
+  animId = requestAnimationFrame(animLoop);
+}else{
+  cancelAnimationFrame(animId);
+}
   } else {
     cx.clearRect(0,0,cv.width,cv.height);
     cv.style.display='none';
@@ -1167,13 +1176,53 @@ if(tn){
 }
 
 /* ── Envelope open ── */
-let eOpened=false;
+let opened=false;
+
 function openEnv(){
-  if(eOpened)return; eOpened=true;
-  document.getElementById('eFlap').classList.add('open');
-  document.getElementById('eSeal').classList.add('gone');
-  document.getElementById('eHint').style.opacity='0';
-  setTimeout(()=>{ document.getElementById('eCard').classList.add('out'); boom(); }, 650);
+
+if(opened) return;
+opened=true;
+
+const flap=document.getElementById('eFlap');
+const seal=document.getElementById('eSeal');
+const card=document.getElementById('eCard');
+const hint=document.getElementById('eHint');
+
+flap.classList.add('open');
+
+setTimeout(()=>{
+seal.classList.add('gone');
+},200);
+
+setTimeout(()=>{
+card.classList.add('out');
+hint.style.opacity=0;
+},600);
+
+function startParticles(){
+
+if(canvasActive) return;
+
+canvasActive=true;
+
+cv.style.display='block';
+
+animLoop();
+
+let i=0;
+
+const fw=setInterval(()=>{
+
+launchRocket();
+
+i++;
+
+if(i>4) clearInterval(fw);
+
+},900);
+
+}
+
 }
 
 /* ── RSVP → Google Forms ── */
