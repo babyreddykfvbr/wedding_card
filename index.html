@@ -157,12 +157,15 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
   transform:translate(-50%,-50%) rotate(180deg) scale(.2);
 }
 
+/* ── Card thiệp bên trong phong bao ── */
 .env-card{
-  position:relative;z-index:3;
+  position:relative;
+  z-index:3;
   background:var(--cream);
   border:1px solid var(--goldlt);
-  padding:14px 12px 12px;
+  padding:12px 10px 10px;   /* padding nhỏ cho 囍 và tên */
   text-align:center;
+  overflow:hidden;
   opacity:0;
   transform:translateY(22px);
   transition:opacity .7s .4s ease, transform .7s .4s ease;
@@ -170,35 +173,50 @@ body{background:var(--cream);color:var(--dark);font-family:var(--fn);overflow-x:
 }
 .env-card.out{opacity:1;transform:translateY(0);}
 
-.ec-chi{font-family:var(--fh);font-size:28px;color:var(--red);line-height:1;margin-bottom:2px;}
-.ec-names{font-family:var(--fs);font-size:clamp(14px,3.8vw,22px);font-weight:700;color:var(--red2);margin:2px 0 6px;}
+/* 囍 và tên nằm trên, trong flow bình thường */
+.ec-chi{
+  font-family:var(--fh);font-size:26px;color:var(--red);
+  line-height:1;margin-bottom:2px;
+}
+.ec-names{
+  font-family:var(--fs);font-size:clamp(14px,3.8vw,20px);font-weight:700;
+  color:var(--red2);margin:2px 0 8px;
+}
 
+/* ── Khung ảnh: KHÔNG aspect-ratio cố định, để ảnh đứng tự nhiên ── */
 .ec-photo-single{
   position:relative;
   overflow:hidden;
   line-height:0;
-  margin:0 0 8px;
-  aspect-ratio:3/2;
+  margin:0 -10px;            /* kéo sát 2 bên mép card */
+  width:calc(100% + 20px);   /* bù lại margin âm */
   background:var(--goldpale);
-  border:1.5px solid var(--goldlt);
+  border-top:1px solid var(--goldlt);
+  border-bottom:none;
 }
 .ec-photo-single img{
-  width:100%;height:100%;
-  object-fit:cover;
-  object-position:top center;
+  width:100%;
+  height:auto;               /* ← giữ NGUYÊN tỉ lệ ảnh gốc, không crop */
   display:block;
+  object-fit:unset;          /* ← không crop gì cả */
 }
 .ec-photo-single .ec-photo-lbl{
   position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(42,5,7,.72));
-  padding:28px 8px 8px;
+  background:linear-gradient(transparent,rgba(42,5,7,.78));
+  padding:44px 8px 10px;
   font-family:var(--fs);font-size:clamp(13px,3.5vw,18px);font-weight:700;
   color:var(--goldlt);text-align:center;
   pointer-events:none;
   letter-spacing:.04em;
 }
 
-.ec-date{font-family:var(--fn);font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.18em;}
+/* Ngày cưới nhỏ dưới ảnh */
+.ec-date{
+  display:block;
+  padding:8px 0 4px;
+  font-family:var(--fn);font-size:11px;font-weight:600;
+  color:var(--gold);letter-spacing:.18em;
+}
 .env-hint{font-family:var(--fn);font-size:12px;font-weight:500;
   color:rgba(255,255,255,.5);letter-spacing:.22em;
   text-align:center;margin-top:18px;position:relative;z-index:5;
@@ -498,6 +516,12 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
 
   <p class="h-save">✦ &nbsp; Save the Date &nbsp; ✦</p>
   <h1 class="h-names">Thiệp Báo Hỷ</h1>
+
+  <div class="hero-photo-wrap">
+    <img src="LXD_5566.jpg" class="hero-couple-img" alt="Cô dâu chú rể"
+      onerror="this.parentElement.style.display='none'">
+  </div>
+
   <div class="env-wrap">
     <div class="env-box">
       <div class="env-base">
@@ -506,9 +530,11 @@ footer{background:var(--red2);color:rgba(255,255,255,.75);
           <div class="ec-chi">囍</div>
           <div class="ec-names">Trung Dũng &amp; Phương Thảo</div>
 
+          <!-- ảnh hiển thị đầy đủ, không crop -->
           <div class="ec-photo-single">
             <img src="LXD_6256.jpg" alt="Trung Dũng &amp; Phương Thảo"
-              onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#9f0f15,#7a0b10)';">
+              onerror="this.style.display='none';this.parentElement.style.minHeight='200px';">
+            <div class="ec-photo-lbl">Trung Dũng &amp; Phương Thảo</div>
           </div>
 
           <div class="ec-date num">22 · 03 · 2026</div>
