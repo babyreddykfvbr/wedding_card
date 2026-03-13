@@ -1121,28 +1121,43 @@ function openEnv(){
 }
 
 /* ── RSVP ── */
-const FORM_URL  = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
-const ENTRIES   = {name:'entry.000000001', attend:'entry.000000002', msg:'entry.000000003'};
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx2aaKHDTiIqoz84OcGeIIXrOJb_I21y7oN3pMVEfdZupGw6bM6iQVHmkUo50mF4Pn7Rw/exec';
 
 function doRSVP(){
   const name = document.getElementById('rName').value.trim();
   const att  = document.getElementById('rAtt').value;
   if(!name){ alert('Vui lòng nhập họ và tên!'); return; }
   if(!att){  alert('Vui lòng chọn xác nhận tham dự!'); return; }
-  const msg = document.getElementById('rMsg').value;
-  if(!FORM_URL.includes('YOUR_FORM_ID')){
-    const fd = new FormData();
-    fd.append(ENTRIES.name, name);
-    fd.append(ENTRIES.attend, att);
-    fd.append(ENTRIES.msg, msg);
-    fetch(FORM_URL, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
-  }
-  document.getElementById('rName').value = '';
-  document.getElementById('rAtt').value  = '';
-  document.getElementById('rMsg').value  = '';
-  const ok = document.getElementById('rOK');
-  ok.style.display = 'block';
-  setTimeout(()=> ok.style.display='none', 5000);
+
+  const msg  = document.getElementById('rMsg').value.trim();
+  const btn  = document.querySelector('.rsvp-btn');
+
+  // Hiện trạng thái đang gửi
+  btn.textContent = 'ĐANG GỬI…';
+  btn.disabled = true;
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode:   'no-cors',          // tránh CORS với Apps Script
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, attend: att, msg })
+  })
+  .then(() => {
+    document.getElementById('rName').value = '';
+    document.getElementById('rAtt').value  = '';
+    document.getElementById('rMsg').value  = '';
+
+    const ok = document.getElementById('rOK');
+    ok.style.display = 'block';
+    setTimeout(() => ok.style.display = 'none', 5000);
+  })
+  .catch(() => {
+    alert('Gửi thất bại, vui lòng thử lại!');
+  })
+  .finally(() => {
+    btn.textContent = 'GỬI NGAY';
+    btn.disabled = false;
+  });
 }
 
 /* ── QR close ── */
